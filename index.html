@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shula — Content Creator & Tech Girl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ef;
+  --bg2: #ffffff;
+  --bg3: #f0ede8;
+  --border: #e0ddd8;
+  --border2: #b8b4ae;
+  --text: #1a1a1a;
+  --text2: #999;
+  --text3: #666;
+  --shadow: rgba(0,0,0,0.09);
+  --shadow2: rgba(0,0,0,0.18);
+  --tag: #f0ede8;
+  --bar: #f7f5f2;
+}
+[data-dark="true"] {
+  --bg: #0f0f0e;
+  --bg2: #1a1a18;
+  --bg3: #222220;
+  --border: #2c2c29;
+  --border2: #484844;
+  --text: #ede9e3;
+  --text2: #5a5a56;
+  --text3: #8a8a84;
+  --shadow: rgba(0,0,0,0.5);
+  --shadow2: rgba(0,0,0,0.7);
+  --tag: #222220;
+  --bar: #1e1e1c;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.4s;
+}
+
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+/* TOPBAR */
+.topbar {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.3rem;
+  display: flex;
+  gap: 7px;
+  z-index: 500;
+}
+.tb-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  user-select: none;
+  transition: border-color 0.15s, background 0.4s, color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.tb-btn:hover { border-color: var(--border2); color: var(--text3); }
+
+/* DESKTOP */
+.desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem 7rem;
+  min-height: 100vh;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem 2.5rem;
+  animation: fadeUp 0.7s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(40px, 7vw, 62px);
+  color: var(--text);
+  letter-spacing: -2px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.hero-name em { font-style: italic; color: var(--text2); }
+.hero-sub {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-top: 0.7rem;
+  transition: color 0.2s;
+}
+
+/* ICON GRID */
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 2.4rem;
+  max-width: 480px;
+  animation: fadeUp 0.7s 0.15s ease both;
+}
+.icon-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 88px;
+  user-select: none;
+}
+.icon-btn:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 22px var(--shadow2);
+}
+.icon-btn:active { transform: scale(0.95) translateY(0); }
+.icon-btn .ico { font-size: 26px; line-height: 1; }
+.icon-btn .lbl { font-size: 11px; color: var(--text2); letter-spacing: 0.05em; }
+
+/* WINDOWS */
+.window {
+  position: fixed;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  box-shadow: 0 12px 50px var(--shadow2);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 290px;
+  max-width: min(94vw, 430px);
+  max-height: 83vh;
+  transition: background 0.4s, border-color 0.2s;
+}
+.window.open { display: flex; }
+
+.win-bar {
+  background: var(--bar);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  transition: background 0.4s, border-color 0.2s;
+}
+.win-bar:active { cursor: grabbing; }
+.win-dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: filter 0.15s; }
+.dot:hover { filter: brightness(0.8); }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+.win-title {
+  font-size: 11px;
+  color: var(--text2);
+  margin-left: 6px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.win-body {
+  padding: 1.4rem;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+.win-body::-webkit-scrollbar { width: 3px; }
+.win-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ABOUT */
+.avatar-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4c5b0, #a89880);
+  margin: 0 auto 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.about-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 23px; color: var(--text);
+  text-align: center; transition: color 0.2s;
+}
+.about-role {
+  font-size: 11px; color: var(--text2);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-top: 4px; text-align: center; transition: color 0.2s;
+}
+.about-bio {
+  font-size: 13px; color: var(--text3); line-height: 1.8;
+  margin-top: 1.1rem; padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+/* TABS */
+.tabs {
+  display: flex; margin-bottom: 1.1rem;
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.tab-btn {
+  flex: 1; padding: 8px 10px; font-size: 11px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  background: var(--bg3); border: none; cursor: pointer;
+  color: var(--text2); transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.tab-btn.active { background: var(--bg2); color: var(--text); font-weight: 500; }
+.tab-btn:not(:last-child) { border-right: 1px solid var(--border); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* CATEGORY GRIDS (photos + videos) */
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.cat-cell {
+  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.cat-cell:hover { opacity: 0.78; transform: scale(0.97); }
+.cat-label {
+  position: absolute; bottom: 5px; left: 5px;
+  background: rgba(0,0,0,0.54); color: #fff;
+  font-size: 9px; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em;
+}
+.cat-count {
+  position: absolute; top: 5px; right: 5px;
+  background: rgba(0,0,0,0.54); color: #fff;
+  font-size: 9px; padding: 2px 6px; border-radius: 4px;
+}
+.cat-cell .cat-ico { font-size: 22px; opacity: 0.75; }
+
+/* photo placeholder gradients */
+.pc1{background:linear-gradient(135deg,#d4c5b0,#a89880);}
+.pc2{background:linear-gradient(135deg,#b0c4d4,#7a9db0);}
+.pc3{background:linear-gradient(135deg,#c4b0d4,#9a7ab0);}
+.pc4{background:linear-gradient(135deg,#d4d0b0,#b0a87a);}
+.pc5{background:linear-gradient(135deg,#b0d4c4,#7ab09a);}
+.pc6{background:linear-gradient(135deg,#d4b0b0,#b07a7a);}
+/* video placeholder gradients */
+.vc1{background:linear-gradient(135deg,#1a1a2e,#16213e);}
+.vc2{background:linear-gradient(135deg,#2e1a1a,#3e1616);}
+.vc3{background:linear-gradient(135deg,#1a2e1a,#16381a);}
+.vc4{background:linear-gradient(135deg,#2e2a1a,#382e16);}
+.vc5{background:linear-gradient(135deg,#2e1a2e,#3e163e);}
+
+/* CODE */
+.project-card {
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.95rem; margin-bottom: 9px; cursor: pointer;
+  transition: all 0.15s;
+}
+.project-card:hover { border-color: var(--border2); transform: translateX(4px); }
+.project-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; transition: color 0.2s; }
+.project-desc { font-size: 12px; color: var(--text3); line-height: 1.55; transition: color 0.2s; }
+.project-tags { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+.tag { font-size: 10px; background: var(--tag); color: var(--text2); padding: 2px 9px; border-radius: 20px; letter-spacing: 0.04em; transition: background 0.4s, color 0.2s; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text2); cursor: pointer;
+  margin-bottom: 1rem; letter-spacing: 0.05em; text-transform: uppercase;
+  border: none; background: none; padding: 0;
+  font-family: 'DM Sans', sans-serif; transition: color 0.15s;
+}
+.back-btn:hover { color: var(--text); }
+.detail-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); line-height: 1.2; transition: color 0.2s; }
+.detail-sub { font-size: 12px; color: var(--text2); margin-top: 4px; letter-spacing: 0.04em; }
+.detail-tags { display: flex; gap: 5px; margin-top: 9px; flex-wrap: wrap; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; transition: border-color 0.2s; }
+.detail-desc { font-size: 13px; color: var(--text3); line-height: 1.8; margin: 0.8rem 0 1rem; }
+.vid-embed {
+  width: 100%; aspect-ratio: 16/9; border-radius: 9px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; margin-bottom: 0.5rem;
+  transition: transform 0.15s;
+}
+.vid-embed:hover { transform: scale(0.99); }
+.vid-embed:hover .play-btn { opacity: 1; }
+.play-btn {
+  width: 40px; height: 40px; background: rgba(255,255,255,0.92);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  opacity: 0.6; transition: opacity 0.2s; font-size: 15px; padding-left: 3px;
+}
+.vid-caption { font-size: 10px; color: var(--text2); text-align: center; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.detail-links { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+.detail-link {
+  font-size: 11px; border: 1px solid var(--border); border-radius: 7px;
+  padding: 7px 14px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.05em;
+  background: none; font-family: 'DM Sans', sans-serif;
+}
+.detail-link:hover { border-color: var(--border2); color: var(--text); }
+.detail-link.primary { background: var(--text); color: var(--bg2); border-color: var(--text); }
+.detail-link.primary:hover { opacity: 0.8; }
+
+/* CONTACT */
+.contact-row {
+  display: flex; align-items: center; gap: 13px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  text-decoration: none; transition: border-color 0.2s;
+  cursor: pointer;
+}
+.contact-row:last-of-type { border-bottom: none; }
+.contact-ico { font-size: 17px; width: 26px; text-align: center; }
+.contact-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.2s; }
+.contact-val { font-size: 13px; color: var(--text); margin-top: 1px; transition: color 0.2s; }
+.send-btn {
+  display: block; width: 100%; margin-top: 1.2rem;
+  background: var(--text); color: var(--bg2); font-size: 12px;
+  padding: 11px; border-radius: 9px; cursor: pointer;
+  letter-spacing: 0.08em; text-align: center; border: none;
+  font-family: 'DM Sans', sans-serif; transition: opacity 0.2s, background 0.4s, color 0.2s;
+  text-transform: uppercase;
+}
+.send-btn:hover { opacity: 0.76; }
+
+/* GALLERY OVERLAY */
+.gallery-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+  z-index: 700; display: none; flex-direction: column;
+}
+.gallery-overlay.open { display: flex; }
+.gallery-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem; background: rgba(0,0,0,0.35); flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.gallery-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: #ede9e3; font-style: italic; }
+.gallery-close {
+  background: rgba(80,80,80,0.6); color: #fff; border: none;
+  border-radius: 50%; width: 32px; height: 32px; font-size: 15px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.gallery-close:hover { background: #666; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 6px; padding: 1.2rem 1.5rem;
+  overflow-y: auto; flex: 1; align-content: start;
+}
+.gallery-grid.vid-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+
+/* Photo thumbs */
+.gallery-thumb {
+  aspect-ratio: 1; border-radius: 7px; overflow: hidden;
+  cursor: pointer; transition: transform 0.15s, opacity 0.15s; position: relative;
+}
+.gallery-thumb:hover { transform: scale(0.97); opacity: 0.82; }
+.gallery-thumb .thumb-inner { width: 100%; height: 100%; object-fit: cover; }
+
+/* Video thumbs */
+.vid-thumb {
+  aspect-ratio: 16/9; border-radius: 7px; overflow: hidden;
+  cursor: pointer; transition: transform 0.15s, opacity 0.15s;
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.vid-thumb:hover { transform: scale(0.97); opacity: 0.82; }
+.vid-thumb .vt-bg { position: absolute; inset: 0; }
+.vid-thumb .vt-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 8px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
+.vid-thumb .vt-title { font-size: 10px; color: #fff; letter-spacing: 0.03em; }
+.vid-thumb .vt-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 30px; height: 30px; background: rgba(255,255,255,0.88); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; padding-left: 2px; opacity: 0.7; transition: opacity 0.15s; }
+.vid-thumb:hover .vt-play { opacity: 1; }
+
+/* ZOOM / VIDEO PLAYER */
+.zoom-box {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.97);
+  z-index: 800; display: none;
+  align-items: center; justify-content: center; cursor: pointer;
+}
+.zoom-box.open { display: flex; }
+.zoom-inner {
+  max-width: 720px; width: 95vw; cursor: default;
+  display: flex; flex-direction: column; align-items: center;
+}
+.zoom-img {
+  width: 100%; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  color: #444; font-size: 12px;
+}
+.zoom-video { width: 100%; border-radius: 10px; overflow: hidden; background: #000; }
+.zoom-video video { width: 100%; display: block; max-height: 72vh; }
+.zoom-caption { color: #888; font-size: 11px; margin-top: 0.75rem; letter-spacing: 0.05em; text-align: center; }
+.zoom-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: rgba(40,40,40,0.9); color: #fff; border: none;
+  border-radius: 50%; width: 32px; height: 32px; font-size: 15px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.zoom-close:hover { background: #555; }
+.zoom-nav { display: flex; gap: 10px; margin-top: 0.9rem; }
+.zoom-nav-btn {
+  background: rgba(255,255,255,0.1); color: #fff; border: none;
+  border-radius: 8px; padding: 7px 20px; font-size: 12px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em;
+  transition: background 0.15s;
+}
+.zoom-nav-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* TASKBAR */
+.taskbar {
+  position: fixed; bottom: 1.1rem; left: 50%; transform: translateX(-50%);
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 8px 14px;
+  display: flex; gap: 8px; z-index: 400;
+  box-shadow: 0 4px 30px var(--shadow2);
+  transition: background 0.4s, border-color 0.2s;
+}
+.tbi {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; transition: all 0.15s;
+  position: relative; user-select: none;
+}
+.tbi:hover { background: var(--bg3); transform: translateY(-3px); }
+.tbi.active::after {
+  content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: var(--text);
+}
+
+/* hint text */
+.hint { font-size: 11px; color: var(--text2); letter-spacing: 0.04em; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-btn" onclick="toggleDark()" id="modeBtn">🌙 dark</div>
+  <div class="tb-btn" onclick="toggleSound()" id="sfxBtn">🔊 sfx</div>
+</div>
+
+<div class="desktop">
+  <div class="hero">
+    <div class="hero-name">shula, <em>creator.</em></div>
+    <div class="hero-sub">content creator · tech girl</div>
+  </div>
+  <div class="icon-grid">
+    <div class="icon-btn" onclick="openWin('about')"><div class="ico">🪞</div><div class="lbl">about</div></div>
+    <div class="icon-btn" onclick="openWin('work')"><div class="ico">🎞</div><div class="lbl">work</div></div>
+    <div class="icon-btn" onclick="openWin('code')"><div class="ico">💻</div><div class="lbl">code</div></div>
+    <div class="icon-btn" onclick="openWin('contact')"><div class="ico">✉️</div><div class="lbl">contact</div></div>
+  </div>
+</div>
+
+<!-- ABOUT WINDOW -->
+<div class="window" id="win-about" style="top:85px;left:50px;width:295px;">
+  <div class="win-bar" onmousedown="dragStart(event,'win-about')">
+    <div class="win-dots">
+      <div class="dot dot-r" onclick="closeWin('about')"></div>
+      <div class="dot dot-y"></div><div class="dot dot-g"></div>
+    </div>
+    <span class="win-title">about</span>
+  </div>
+  <div class="win-body">
+    <div class="avatar-circle">📸</div>
+    <div class="about-name">Shula</div>
+    <div class="about-role">Edmonton, AB</div>
+    <div class="about-bio">
+      Hey! I'm Shula — content creator, photographer, videographer, and tech girl based in Edmonton.<br><br>
+      From golden hour portraits to cinematic reels to writing code at 2am — this is me in one place.
+    </div>
+  </div>
+</div>
+
+<!-- WORK WINDOW -->
+<div class="window" id="win-work" style="top:70px;left:180px;width:400px;">
+  <div class="win-bar" onmousedown="dragStart(event,'win-work')">
+    <div class="win-dots">
+      <div class="dot dot-r" onclick="closeWin('work')"></div>
+      <div class="dot dot-y"></div><div class="dot dot-g"></div>
+    </div>
+    <span class="win-title">work</span>
+  </div>
+  <div class="win-body">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('photos',this)">📷 photos</button>
+      <button class="tab-btn" onclick="switchTab('videos',this)">🎬 videos</button>
+    </div>
+    <div class="tab-pane active" id="tab-photos">
+      <p class="hint">click a category to browse all photos</p>
+      <div class="cat-grid" id="photo-cat-grid"></div>
+    </div>
+    <div class="tab-pane" id="tab-videos">
+      <p class="hint">click a category to watch videos</p>
+      <div class="cat-grid" id="video-cat-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE WINDOW -->
+<div class="window" id="win-code" style="top:110px;left:350px;width:380px;">
+  <div class="win-bar" onmousedown="dragStart(event,'win-code')">
+    <div class="win-dots">
+      <div class="dot dot-r" onclick="closeWin('code')"></div>
+      <div class="dot dot-y"></div><div class="dot dot-g"></div>
+    </div>
+    <span class="win-title" id="code-win-title">code projects</span>
+  </div>
+  <div class="win-body">
+    <div id="code-list"></div>
+    <div id="code-detail" style="display:none;">
+      <button class="back-btn" onclick="closeProject()">← back</button>
+      <div class="detail-title" id="d-title"></div>
+      <div class="detail-sub" id="d-sub"></div>
+      <div class="detail-tags" id="d-tags"></div>
+      <hr class="divider">
+      <div class="detail-desc" id="d-desc"></div>
+      <div class="vid-embed" id="d-vid" onclick="playDetailVid()"><div class="play-btn">▶</div></div>
+      <p class="vid-caption" id="d-vid-label"></p>
+      <div class="detail-links" id="d-links"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT WINDOW -->
+<div class="window" id="win-contact" style="top:120px;left:220px;width:305px;">
+  <div class="win-bar" onmousedown="dragStart(event,'win-contact')">
+    <div class="win-dots">
+      <div class="dot dot-r" onclick="closeWin('contact')"></div>
+      <div class="dot dot-y"></div><div class="dot dot-g"></div>
+    </div>
+    <span class="win-title">contact</span>
+  </div>
+  <div class="win-body">
+    <a class="contact-row" href="mailto:shulajuguilon@gmail.com">
+      <div class="contact-ico">📧</div>
+      <div><div class="contact-label">email</div><div class="contact-val">shulajuguilon@gmail.com</div></div>
+    </a>
+    <a class="contact-row" href="https://www.instagram.com/shulasdrafts" target="_blank" rel="noopener">
+      <div class="contact-ico">📷</div>
+      <div><div class="contact-label">instagram</div><div class="contact-val">@shulasdrafts</div></div>
+    </a>
+    <a class="contact-row" href="https://www.youtube.com/@shulajuguilon" target="_blank" rel="noopener">
+      <div class="contact-ico">🎬</div>
+      <div><div class="contact-label">youtube</div><div class="contact-val">youtube.com/@shulajuguilon</div></div>
+    </a>
+    <a class="contact-row" href="https://github.com/sj1001-cs" target="_blank" rel="noopener">
+      <div class="contact-ico">🐙</div>
+      <div><div class="contact-label">github</div><div class="contact-val">github.com/sj1001-cs</div></div>
+    </a>
+    <button class="send-btn" onclick="window.location.href='mailto:shulajuguilon@gmail.com'">send a message</button>
+  </div>
+</div>
+
+<!-- GALLERY OVERLAY -->
+<div class="gallery-overlay" id="gallery-overlay">
+  <div class="gallery-header">
+    <div class="gallery-title" id="gallery-title"></div>
+    <button class="gallery-close" onclick="closeGallery()">✕</button>
+  </div>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<!-- ZOOM / VIDEO PLAYER -->
+<div class="zoom-box" id="zoom-box" onclick="closeZoom()">
+  <button class="zoom-close" onclick="closeZoom()">✕</button>
+  <div class="zoom-inner" onclick="event.stopPropagation()">
+    <div id="zoom-content"></div>
+    <div class="zoom-caption" id="zoom-caption"></div>
+    <div class="zoom-nav">
+      <button class="zoom-nav-btn" onclick="zoomNav(-1)">← prev</button>
+      <button class="zoom-nav-btn" onclick="zoomNav(1)">next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <div class="tbi" onclick="openWin('about')" title="about">🪞</div>
+  <div class="tbi" onclick="openWin('work')" title="work">🎞</div>
+  <div class="tbi" onclick="openWin('code')" title="code">💻</div>
+  <div class="tbi" onclick="openWin('contact')" title="contact">✉️</div>
+</div>
+
+<script>
+
+/* =====================================================
+   PHOTO DATA
+   Change 'bg' to 'src' and set the
+   value to my image path, e.g. 'photos/portrait-1.jpg'
+   { bg:'linear-gradient(135deg,#d4c5b0,#c4a88a)', caption:'Golden hour, downtown Edmonton' },
+
+===================================================== */
+const photoData = {
+  Portrait: {
+    style: 'pc1',
+    photos: [
+      
+    ]
+  },
+  Landscape: {
+    style: 'pc2',
+    photos: [
+   
+    ]
+  },
+  Event: {
+    style: 'pc3',
+    photos: [
+     
+    ]
+  },
+  Lifestyle: {
+    style: 'pc4',
+    photos: [
+      
+    ]
+  },
+  Urban: {
+    style: 'pc5',
+    photos: [
+      
+    ]
+  },
+  Product: {
+    style: 'pc6',
+    photos: [
+      
+    ]
+  }
+};
+
+/* =====================================================
+   VIDEO DATA
+   To add video, set src to my .mp4 file path:
+   e.g. src: 'videos/short-film-1.mp4'
+   Leave src as '' to show a placeholder until you're ready.
+   'thumb' is the preview gradient — swap for a thumbnail image src.
+===================================================== */
+const videoData = {
+  'Short Films': {
+    style: 'vc1', icon: '🎬',
+    videos: [
+    
+    ]
+  },
+  Reels: {
+    style: 'vc2', icon: '📱',
+    videos: [
+      
+    ]
+  },
+  Brand: {
+    style: 'vc3', icon: '💼',
+    videos: [
+      
+    ]
+  },
+  Travel: {
+    style: 'vc4', icon: '✈️',
+    videos: [
+      
+    ]
+  },
+  Events: {
+    style: 'vc5', icon: '🎤',
+    videos: [
+      { src:'/Users/shulajuguilon/Desktop/photos/DJIEdit/recroom2.mp4', thumb:'linear-gradient(135deg,#2e1a2e,#3e163e)', title:'Arcade Night', caption:'Arcade at Rec Room · 16 sec' },
+    ]
+  }
+};
+
+/* =====================================================
+   CODE PROJECTS
+   add projects.
+   Leave src:'' in the video field until I have a recording.
+===================================================== */
+const projects = [
+  {
+    title: 'This Portfolio Site',
+    sub: 'HTML · CSS · Vanilla JS · 2026',
+    tags: ['HTML','CSS','JS','Design'],
+    desc: 'Built entirely from scratch — no frameworks. Draggable windows, dark/light mode, Web Audio API sound effects, photo galleries with grid popups, and video playback. Inspired by a desktop OS aesthetic.',
+    videoLabel: 'walkthrough demo · 1 min',
+    videoBg: 'linear-gradient(135deg,#1a1a2e,#16213e)',
+    videoSrc: '',
+    links: [
+      { label:'view on github', primary:false, href:'https://github.com/sj1001-cs' },
+      { label:'live site ↗', primary:true, href:'#' }
+    ]
+  }
+];
+
+/* =====================================================
+   BUILD GRIDS + CODE LIST ON LOAD
+===================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  // Photo category grid
+  const photoCatGrid = document.getElementById('photo-cat-grid');
+  Object.entries(photoData).forEach(([name, data]) => {
+    const cell = document.createElement('div');
+    cell.className = `cat-cell ${data.style}`;
+    cell.innerHTML = `<div class="cat-label">${name.toLowerCase()}</div><div class="cat-count">${data.photos.length}</div>`;
+    cell.onclick = () => openPhotoGallery(name);
+    photoCatGrid.appendChild(cell);
+  });
+
+  // Video category grid
+  const vidCatGrid = document.getElementById('video-cat-grid');
+  Object.entries(videoData).forEach(([name, data]) => {
+    const cell = document.createElement('div');
+    cell.className = `cat-cell ${data.style}`;
+    cell.innerHTML = `<div class="cat-ico">${data.icon}</div><div class="cat-label">${name.toLowerCase()}</div><div class="cat-count">${data.videos.length}</div>`;
+    cell.onclick = () => openVideoGallery(name);
+    vidCatGrid.appendChild(cell);
+  });
+
+  // Code list
+  const list = document.getElementById('code-list');
+  projects.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.onclick = () => openProject(i);
+    card.innerHTML = `
+      <div class="project-name">${p.title}</div>
+      <div class="project-desc">${p.desc.split('.')[0]}.</div>
+      <div class="project-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    `;
+    list.appendChild(card);
+  });
+});
+
+/* =====================================================
+   GALLERY + ZOOM
+===================================================== */
+let currentMode = 'photo';
+let currentCat  = '';
+let currentIdx  = 0;
+
+function openPhotoGallery(cat) {
+  currentMode = 'photo'; currentCat = cat;
+  document.getElementById('gallery-title').textContent = cat;
+  const grid = document.getElementById('gallery-grid');
+  grid.className = 'gallery-grid'; grid.innerHTML = '';
+  photoData[cat].photos.forEach((p, i) => {
+    const t = document.createElement('div');
+    t.className = 'gallery-thumb';
+    // To use real images: t.innerHTML = `<img class="thumb-inner" src="${p.src}" alt="${p.caption}">`
+    t.innerHTML = `<div class="thumb-inner" style="background:${p.bg}"></div>`;
+    t.onclick = () => openZoom(i);
+    grid.appendChild(t);
+  });
+  document.getElementById('gallery-overlay').classList.add('open');
+  tone(600,1000,0.1,0.07);
+}
+
+function openVideoGallery(cat) {
+  currentMode = 'video'; currentCat = cat;
+  document.getElementById('gallery-title').textContent = cat;
+  const grid = document.getElementById('gallery-grid');
+  grid.className = 'gallery-grid vid-grid'; grid.innerHTML = '';
+  videoData[cat].videos.forEach((v, i) => {
+    const t = document.createElement('div');
+    t.className = 'vid-thumb';
+    t.innerHTML = `
+      <div class="vt-bg" style="background:${v.thumb}"></div>
+      <div class="vt-play">▶</div>
+      <div class="vt-info"><div class="vt-title">${v.title}</div></div>`;
+    t.onclick = () => openZoom(i);
+    grid.appendChild(t);
+  });
+  document.getElementById('gallery-overlay').classList.add('open');
+  tone(600,1000,0.1,0.07);
+}
+
+function closeGallery() {
+  document.getElementById('gallery-overlay').classList.remove('open');
+  stopVideo();
+  tone(700,300,0.1,0.06);
+}
+
+function openZoom(idx) {
+  currentIdx = idx; renderZoom();
+  document.getElementById('zoom-box').classList.add('open');
+  tone(600,1000,0.12,0.07);
+}
+
+function renderZoom() {
+  const content = document.getElementById('zoom-content');
+  const caption = document.getElementById('zoom-caption');
+  if (currentMode === 'photo') {
+    const p = photoData[currentCat].photos[currentIdx];
+    // To use real images: content.innerHTML = `<img class="zoom-img" src="${p.src}" style="object-fit:cover" alt="${p.caption}">`
+    content.innerHTML = `<div class="zoom-img" style="background:${p.bg}"></div>`;
+    caption.textContent = `${currentCat} · ${p.caption} · ${currentIdx+1} / ${photoData[currentCat].photos.length}`;
+  } else {
+    const v = videoData[currentCat].videos[currentIdx];
+    if (v.src) {
+      content.innerHTML = `<div class="zoom-video"><video controls autoplay><source src="${v.src}" type="video/mp4"></video></div>`;
+    } else {
+      content.innerHTML = `<div class="zoom-img" style="background:${v.thumb};flex-direction:column;gap:8px;"><div style="font-size:32px;">🎬</div><div style="color:#aaa;font-size:12px;letter-spacing:0.05em;">${v.title}</div><div style="color:#555;font-size:10px;">add your .mp4 file to play video here</div></div>`;
+    }
+    caption.textContent = `${v.title} · ${v.caption} · ${currentIdx+1} / ${videoData[currentCat].videos.length}`;
+  }
+}
+
+function zoomNav(dir) {
+  stopVideo();
+  const len = currentMode === 'photo' ? photoData[currentCat].photos.length : videoData[currentCat].videos.length;
+  currentIdx = (currentIdx + dir + len) % len;
+  renderZoom();
+  tone(800,800,0.03,0.05);
+}
+
+function closeZoom() {
+  stopVideo();
+  document.getElementById('zoom-box').classList.remove('open');
+  tone(700,300,0.1,0.06);
+}
+
+function stopVideo() {
+  const v = document.querySelector('#zoom-content video');
+  if (v) v.pause();
+}
+
+/* =====================================================
+   CODE PROJECT DETAIL
+===================================================== */
+function openProject(i) {
+  const p = projects[i];
+  document.getElementById('code-list').style.display = 'none';
+  document.getElementById('code-detail').style.display = 'block';
+  document.getElementById('code-win-title').textContent = p.title.toLowerCase();
+  document.getElementById('d-title').textContent = p.title;
+  document.getElementById('d-sub').textContent = p.sub;
+  document.getElementById('d-tags').innerHTML = p.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  document.getElementById('d-desc').textContent = p.desc;
+  const v = document.getElementById('d-vid');
+  v.style.background = p.videoBg;
+  v.innerHTML = '<div class="play-btn">▶</div>';
+  v.dataset.src = p.videoSrc || '';
+  document.getElementById('d-vid-label').textContent = p.videoLabel;
+  document.getElementById('d-links').innerHTML = p.links.map(l =>
+    `<button class="detail-link ${l.primary?'primary':''}" onclick="window.open('${l.href}','_blank')">${l.label}</button>`
+  ).join('');
+  tone(600,1000,0.1,0.07);
+}
+
+function closeProject() {
+  document.getElementById('code-list').style.display = 'block';
+  document.getElementById('code-detail').style.display = 'none';
+  document.getElementById('code-win-title').textContent = 'code projects';
+  tone(700,400,0.1,0.06);
+}
+
+function playDetailVid() {
+  const v = document.getElementById('d-vid');
+  const src = v.dataset.src;
+  if (src) {
+    v.innerHTML = `<video controls autoplay style="width:100%;height:100%;border-radius:9px;"><source src="${src}" type="video/mp4"></video>`;
+  } else {
+    v.innerHTML = `<div style="color:#fff;font-size:11px;padding:14px;text-align:center;line-height:2;">▶ demo video<br><span style="font-size:9px;color:#aaa;">add your screen recording here</span></div>`;
+  }
+  tone(880,440,0.07,0.09);
+}
+
+/* =====================================================
+   AUDIO
+===================================================== */
+let sfx = true, actx;
+function ac() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); return actx; }
+function tone(f1, f2, d, v) {
+  if (!sfx) return;
+  try {
+    const c=ac(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='sine';
+    o.frequency.setValueAtTime(f1, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f2, c.currentTime+d);
+    g.gain.setValueAtTime(v, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+d+0.02);
+    o.start(); o.stop(c.currentTime+d+0.03);
+  } catch(e) {}
+}
+function toggleSound() {
+  sfx = !sfx;
+  document.getElementById('sfxBtn').textContent = sfx ? '🔊 sfx' : '🔇 sfx';
+  if (sfx) tone(880,440,0.06,0.1);
+}
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+let dark = false;
+function toggleDark() {
+  dark = !dark;
+  document.body.setAttribute('data-dark', dark);
+  document.getElementById('modeBtn').textContent = dark ? '☀️ light' : '🌙 dark';
+  tone(dark?400:700, dark?700:400, 0.1, 0.07);
+}
+
+/* =====================================================
+   WINDOWS
+===================================================== */
+let z = 200;
+function openWin(n) {
+  const w = document.getElementById('win-'+n);
+  if (!w) return;
+  w.classList.add('open');
+  w.style.zIndex = ++z;
+  tone(600,1000,0.1,0.07);
+  document.querySelectorAll('.tbi').forEach(t => {
+    if (t.getAttribute('title') === n) t.classList.add('active');
+  });
+}
+function closeWin(n) {
+  const w = document.getElementById('win-'+n);
+  if (!w) return;
+  w.classList.remove('open');
+  tone(700,300,0.1,0.06);
+  document.querySelectorAll('.tbi').forEach(t => {
+    if (t.getAttribute('title') === n) t.classList.remove('active');
+  });
+}
+
+/* =====================================================
+   TABS
+===================================================== */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  tone(800,800,0.03,0.05);
+}
+
+/* =====================================================
+   DRAG
+===================================================== */
+let drag = null, ox = 0, oy = 0;
+function dragStart(e, id) {
+  const w = document.getElementById(id);
+  w.style.zIndex = ++z;
+  drag = w;
+  ox = e.clientX - w.getBoundingClientRect().left;
+  oy = e.clientY - w.getBoundingClientRect().top;
+  document.addEventListener('mousemove', dragMove);
+  document.addEventListener('mouseup', dragEnd);
+}
+function dragMove(e) {
+  if (!drag) return;
+  drag.style.left = (e.clientX - ox) + 'px';
+  drag.style.top  = (e.clientY - oy) + 'px';
+}
+function dragEnd() {
+  drag = null;
+  document.removeEventListener('mousemove', dragMove);
+  document.removeEventListener('mouseup', dragEnd);
+}
+</script>
+</body>
+</html>
