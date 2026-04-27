@@ -1,2 +1,2 @@
 # My Website
-[Link Text](https://sj1001-cs.github.io/)
+[Click to check out my website](https://sj1001-cs.github.io/)
